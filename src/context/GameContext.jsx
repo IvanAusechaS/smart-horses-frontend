@@ -38,19 +38,27 @@ export const GameProvider = ({ children }) => {
     setHighlightedSquare(position);
 
     try {
+      // First, visually show the player's move for 800ms
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
+      // Then send the move to backend and get AI response
       const response = await gameApi.makeMove(gameState, position);
+      
       // Backend returns the game state directly in the response
       setGameState(response);
       setValidMoves([]);
       
-      // Highlight machine's move briefly
+      // After a brief pause, highlight machine's move
       if (response.machine_move) {
         setTimeout(() => {
           setHighlightedSquare(response.machine_move);
           setTimeout(() => {
             setHighlightedSquare(null);
-          }, 800);
-        }, 400);
+          }, 1000);
+        }, 500);
+      } else {
+        // No machine move, clear highlight
+        setHighlightedSquare(null);
       }
     } catch (err) {
       setError(err.message || 'Invalid move');
