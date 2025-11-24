@@ -64,23 +64,22 @@ class GameAPI {
 
   /**
    * Get valid moves for a knight at given position
-   * @param {Array} knightPosition - [row, col]
-   * @param {Object} board - Current board state
+   * @param {Object} gameState - Current game state
+   * @param {string} knight - 'white' or 'black'
    * @returns {Promise<Array>} Array of valid move positions
    */
-  async getValidMoves(knightPosition, board) {
+  async getValidMoves(gameState, knight = 'black') {
     try {
-      const response = await fetch(
-        `${API_URL}/api/game/valid-moves?knight_position=${JSON.stringify(
-          knightPosition
-        )}&board=${JSON.stringify(board)}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      );
+      const response = await fetch(`${API_URL}/api/game/valid-moves`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          game_state: gameState,
+          knight: knight,
+        }),
+      });
 
       if (!response.ok) {
         throw new Error('Failed to get valid moves');

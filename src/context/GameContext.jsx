@@ -39,7 +39,8 @@ export const GameProvider = ({ children }) => {
 
     try {
       const response = await gameApi.makeMove(gameState, position);
-      setGameState(response.game_state);
+      // Backend returns the game state directly in the response
+      setGameState(response);
       setValidMoves([]);
       
       // Highlight machine's move briefly
@@ -67,10 +68,7 @@ export const GameProvider = ({ children }) => {
     }
 
     try {
-      const moves = await gameApi.getValidMoves(
-        gameState.black_knight,
-        gameState.board
-      );
+      const moves = await gameApi.getValidMoves(gameState, 'black');
       setValidMoves(moves);
     } catch (err) {
       console.error('Error loading valid moves:', err);
