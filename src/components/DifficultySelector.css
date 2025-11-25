@@ -63,13 +63,15 @@
 }
 
 .difficulty-icon {
-  font-size: clamp(1.8rem, 3vw, 2.2rem);
-  filter: grayscale(0.2);
+  width: clamp(2.5rem, 5vw, 3.5rem);
+  height: clamp(2.5rem, 5vw, 3.5rem);
+  object-fit: contain;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.15));
   transition: filter 0.3s ease;
 }
 
 .difficulty-button:hover:not(:disabled) .difficulty-icon {
-  filter: grayscale(0);
+  filter: drop-shadow(0 4px 12px rgba(0, 122, 255, 0.3));
 }
 
 .difficulty-label {

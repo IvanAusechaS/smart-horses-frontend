@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import './ScorePanel.css';
 
 const ScorePanel = ({ whiteScore, blackScore, currentPlayer, gameOver, winner }) => {
@@ -20,33 +21,72 @@ const ScorePanel = ({ whiteScore, blackScore, currentPlayer, gameOver, winner })
   };
 
   return (
-    <div className="score-panel">
+    <motion.div 
+      className="score-panel"
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
       <div className="status-section">
-        <div className={`status-message ${getStatusClass()}`}>
+        <motion.div 
+          className={`status-message ${getStatusClass()}`}
+          key={getStatusMessage()}
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.3 }}
+        >
           {getStatusMessage()}
-        </div>
+        </motion.div>
       </div>
       
       <div className="scores-container">
-        <div className={`score-item machine ${currentPlayer === 'white' && !gameOver ? 'active' : ''}`}>
+        <motion.div 
+          className={`score-item machine ${currentPlayer === 'white' && !gameOver ? 'active' : ''}`}
+          animate={{ 
+            scale: currentPlayer === 'white' && !gameOver ? [1, 1.05, 1] : 1 
+          }}
+          transition={{ duration: 0.5, repeat: currentPlayer === 'white' && !gameOver ? Infinity : 0 }}
+        >
           <div className="score-label">
             <span className="player-icon">♞</span>
             <span>Machine</span>
           </div>
-          <div className="score-value">{whiteScore}</div>
-        </div>
+          <motion.div 
+            className="score-value"
+            key={whiteScore}
+            initial={{ scale: 1.5, color: '#007aff' }}
+            animate={{ scale: 1, color: '#1d1d1f' }}
+            transition={{ duration: 0.4 }}
+          >
+            {whiteScore}
+          </motion.div>
+        </motion.div>
 
         <div className="score-divider"></div>
 
-        <div className={`score-item player ${currentPlayer === 'black' && !gameOver ? 'active' : ''}`}>
+        <motion.div 
+          className={`score-item player ${currentPlayer === 'black' && !gameOver ? 'active' : ''}`}
+          animate={{ 
+            scale: currentPlayer === 'black' && !gameOver ? [1, 1.05, 1] : 1 
+          }}
+          transition={{ duration: 0.5, repeat: currentPlayer === 'black' && !gameOver ? Infinity : 0 }}
+        >
           <div className="score-label">
             <span className="player-icon">♞</span>
             <span>You</span>
           </div>
-          <div className="score-value">{blackScore}</div>
-        </div>
+          <motion.div 
+            className="score-value"
+            key={blackScore}
+            initial={{ scale: 1.5, color: '#007aff' }}
+            animate={{ scale: 1, color: '#1d1d1f' }}
+            transition={{ duration: 0.4 }}
+          >
+            {blackScore}
+          </motion.div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

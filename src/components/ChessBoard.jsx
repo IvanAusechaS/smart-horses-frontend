@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import Square from './Square';
 import './ChessBoard.css';
 
@@ -35,8 +36,17 @@ const ChessBoard = ({ gameState, onSquareClick, validMoves = [], highlightedSqua
   };
 
   return (
-    <div className="chess-board-container">
-      <div className="chess-board">
+    <motion.div 
+      className="chess-board-container"
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.6, type: 'spring', stiffness: 100 }}
+    >
+      <motion.div 
+        className="chess-board"
+        whileHover={{ scale: 1.01 }}
+        transition={{ duration: 0.2 }}
+      >
         {Array.from({ length: 8 }, (_, row) => (
           <div key={row} className="board-row">
             {Array.from({ length: 8 }, (_, col) => (
@@ -53,8 +63,13 @@ const ChessBoard = ({ gameState, onSquareClick, validMoves = [], highlightedSqua
             ))}
           </div>
         ))}
-      </div>
-      <div className="board-labels">
+      </motion.div>
+      <motion.div 
+        className="board-labels"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.4, duration: 0.5 }}
+      >
         <div className="row-labels">
           {Array.from({ length: 8 }, (_, i) => (
             <span key={i} className="label">{8 - i}</span>
@@ -65,8 +80,8 @@ const ChessBoard = ({ gameState, onSquareClick, validMoves = [], highlightedSqua
             <span key={i} className="label">{String.fromCharCode(65 + i)}</span>
           ))}
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
 

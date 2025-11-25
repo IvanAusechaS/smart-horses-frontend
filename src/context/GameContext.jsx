@@ -1,5 +1,6 @@
 import { createContext, useState, useCallback } from 'react';
 import gameApi from '../api/gameApi';
+import audioManager from '../utils/audioManager';
 
 const GameContext = createContext(null);
 
@@ -36,10 +37,13 @@ export const GameProvider = ({ children }) => {
     setLoading(true);
     setError(null);
     setHighlightedSquare(position);
+    
+    // Play move sound
+    audioManager.play('pieceMove');
 
     try {
-      // First, visually show the player's move for 800ms
-      await new Promise(resolve => setTimeout(resolve, 800));
+      // First, visually show the player's move for 2 seconds
+      await new Promise(resolve => setTimeout(resolve, 2000));
       
       // Then send the move to backend and get AI response
       const response = await gameApi.makeMove(gameState, position);
@@ -52,6 +56,8 @@ export const GameProvider = ({ children }) => {
       if (response.machine_move) {
         setTimeout(() => {
           setHighlightedSquare(response.machine_move);
+          // Play AI move sound
+          audioManager.play('pieceMove');
           setTimeout(() => {
             setHighlightedSquare(null);
           }, 1000);
@@ -64,6 +70,7 @@ export const GameProvider = ({ children }) => {
       setError(err.message || 'Invalid move');
       console.error('Error making move:', err);
       setHighlightedSquare(null);
+      audioManager.play('error');
     } finally {
       setLoading(false);
     }

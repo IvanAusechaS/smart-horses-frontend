@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import './Square.css';
 
 const Square = ({ position, value, knight, isValid, isDestroyed, onClick, isHighlighted }) => {
@@ -39,9 +40,28 @@ const Square = ({ position, value, knight, isValid, isDestroyed, onClick, isHigh
   return (
     <div className={getSquareClass()} onClick={handleClick}>
       {knight && (
-        <div className={`knight ${knight}`}>
+        <motion.div 
+          className={`knight ${knight}`}
+          initial={{ scale: 0, rotate: -180 }}
+          animate={{ 
+            scale: 1, 
+            rotate: 0,
+            y: isHighlighted ? [-5, 5, -5] : 0
+          }}
+          transition={{ 
+            type: 'spring',
+            stiffness: 300,
+            damping: 20,
+            y: {
+              duration: 0.5,
+              repeat: isHighlighted ? Infinity : 0,
+              ease: 'easeInOut'
+            }
+          }}
+          key={`${row}-${col}-${knight}`}
+        >
           <span className="knight-symbol">♞</span>
-        </div>
+        </motion.div>
       )}
       {getValueDisplay()}
       {isDestroyed && <div className="destroyed-marker"></div>}
