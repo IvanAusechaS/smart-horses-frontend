@@ -129,16 +129,20 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 1000;
+  z-index: 10000;
   background: rgba(255, 255, 255, 0.98);
   backdrop-filter: blur(20px);
-  border-radius: 24px;
-  padding: 48px 64px;
+  border-radius: clamp(16px, 3vw, 24px);
+  padding: clamp(32px, 5vw, 64px) clamp(24px, 5vw, 48px);
   box-shadow: 
     0 20px 60px rgba(0, 0, 0, 0.3),
     0 8px 16px rgba(0, 0, 0, 0.2);
   border: 2px solid rgba(0, 122, 255, 0.2);
   text-align: center;
+  max-height: 90vh;
+  max-width: 90vw;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .game-over-overlay.victory {
@@ -155,7 +159,8 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
+  gap: clamp(12px, 2vw, 16px);
+  min-width: min-content;
 }
 
 .game-over-emoji {
@@ -307,6 +312,24 @@ body {
 
   .game-container {
     gap: var(--spacing-md);
+  }
+
+  .game-over-overlay {
+    padding: clamp(24px, 8vw, 32px) clamp(20px, 6vw, 24px);
+    max-width: 95vw;
+    border-radius: 16px;
+  }
+
+  .game-over-emoji {
+    font-size: clamp(3rem, 12vw, 4.5rem);
+  }
+}
+
+@media (max-width: 480px) {
+  .game-over-overlay {
+    padding: 20px 16px;
+    max-width: 95vw;
+    border-radius: 12px;
   }
 }
 

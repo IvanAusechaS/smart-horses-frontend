@@ -6,7 +6,7 @@ class AudioManager {
     this.sounds = {};
     this.bgMusic = null;
     this.isMuted = false;
-    this.musicVolume = 0.3;
+    this.musicVolume = 0.24; // Reduced by 20% from 0.3
     this.sfxVolume = 0.5;
   }
 
