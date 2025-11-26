@@ -1,4 +1,5 @@
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+// Use environment variable or fallback to production backend
+const API_URL = import.meta.env.VITE_API_URL || "https://smart-horses-backend.onrender.com";
 
 /**
  * API service for Smart Horses game
@@ -27,6 +28,9 @@ class GameAPI {
       return await response.json();
     } catch (error) {
       console.error("Error creating new game:", error);
+      if (error.message === "Failed to fetch") {
+        throw new Error("Cannot connect to game server. Please check your internet connection.");
+      }
       throw error;
     }
   }
@@ -58,6 +62,9 @@ class GameAPI {
       return await response.json();
     } catch (error) {
       console.error("Error making move:", error);
+      if (error.message === "Failed to fetch") {
+        throw new Error("Cannot connect to game server. Please check your internet connection.");
+      }
       throw error;
     }
   }
