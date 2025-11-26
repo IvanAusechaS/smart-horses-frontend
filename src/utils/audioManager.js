@@ -21,13 +21,14 @@ class AudioManager {
   }
 
   initBackgroundMusic() {
-    // Create a simple looping background track
-    // In production, replace with actual music file:
-    // this.bgMusic = new Audio('/audio/background-music.mp3');
-    this.bgMusic = this.createBackgroundMusic();
-    if (this.bgMusic) {
+    // Use actual music file from public/audio directory
+    try {
+      this.bgMusic = new Audio('/audio/video game - David Feyslan.mp3');
       this.bgMusic.loop = true;
       this.bgMusic.volume = this.musicVolume;
+    } catch (e) {
+      console.log('Failed to load background music:', e);
+      this.bgMusic = null;
     }
   }
 

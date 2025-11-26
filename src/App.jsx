@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -24,6 +24,8 @@ function GameContent() {
     handleSquareClick,
   } = useGame();
 
+  const [showGameOver, setShowGameOver] = useState(false);
+
   // Start background music on mount
   useEffect(() => {
     audioManager.playBackgroundMusic();
@@ -36,6 +38,8 @@ function GameContent() {
   useEffect(() => {
     if (gameState && gameState.game_over && gameState.winner) {
       const isPlayerWin = gameState.winner === 'black';
+      
+      setShowGameOver(true);
       
       setTimeout(() => {
         if (isPlayerWin) {
@@ -60,12 +64,25 @@ function GameContent() {
           });
         }
       }, 500);
+
+      // Auto-dismiss overlay after 8 seconds
+      setTimeout(() => {
+        setShowGameOver(false);
+      }, 8000);
     } else if (gameState && gameState.game_over && !gameState.winner) {
       // Draw
+      setShowGameOver(true);
       toast.info('🤝 Draw! It\'s a tie!', {
         position: 'top-center',
         autoClose: 5000,
       });
+      
+      // Auto-dismiss overlay after 8 seconds
+      setTimeout(() => {
+        setShowGameOver(false);
+      }, 8000);
+    } else {
+      setShowGameOver(false);
     }
   }, [gameState]);
 
@@ -176,11 +193,12 @@ function GameContent() {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.5 }}
             >
-              {gameState.game_over && (
+              {showGameOver && gameState.game_over && (
                 <motion.div
                   className={`game-over-overlay ${gameState.winner === 'black' ? 'victory' : 'defeat'}`}
                   initial={{ opacity: 0, scale: 0.5 }}
                   animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.5 }}
                   transition={{ 
                     duration: 0.6,
                     type: 'spring',
