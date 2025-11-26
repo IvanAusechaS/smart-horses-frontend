@@ -1,6 +1,6 @@
-import { createContext, useState, useCallback } from 'react';
-import gameApi from '../api/gameApi';
-import audioManager from '../utils/audioManager';
+import { createContext, useState, useCallback } from "react";
+import gameApi from "../api/gameApi";
+import audioManager from "../utils/audioManager";
 
 const GameContext = createContext(null);
 
@@ -22,71 +22,82 @@ export const GameProvider = ({ children }) => {
       setValidMoves([]);
       setHighlightedSquare(null);
     } catch (err) {
-      setError(err.message || 'Failed to start game');
-      console.error('Error starting game:', err);
+      setError(err.message || "Failed to start game");
+      console.error("Error starting game:", err);
     } finally {
       setLoading(false);
     }
   }, []);
 
-  const makePlayerMove = useCallback(async (position) => {
-    if (!gameState || gameState.current_player !== 'black' || gameState.game_over) {
-      return;
-    }
-
-    setLoading(true);
-    setError(null);
-    setHighlightedSquare(position);
-    
-    // Play move sound
-    audioManager.play('pieceMove');
-
-    try {
-      // First, visually show the player's move for 2 seconds
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Then send the move to backend and get AI response
-      const response = await gameApi.makeMove(gameState, position);
-      
-      // Backend returns the game state directly in the response
-      setGameState(response);
-      setValidMoves([]);
-      
-      // After a brief pause, highlight machine's move
-      if (response.machine_move) {
-        setTimeout(() => {
-          setHighlightedSquare(response.machine_move);
-          // Play AI move sound
-          audioManager.play('pieceMove');
-          setTimeout(() => {
-            setHighlightedSquare(null);
-          }, 1000);
-        }, 500);
-      } else {
-        // No machine move, clear highlight
-        setHighlightedSquare(null);
+  const makePlayerMove = useCallback(
+    async (position) => {
+      if (
+        !gameState ||
+        gameState.current_player !== "black" ||
+        gameState.game_over
+      ) {
+        return;
       }
-    } catch (err) {
-      setError(err.message || 'Invalid move');
-      console.error('Error making move:', err);
-      setHighlightedSquare(null);
-      audioManager.play('error');
-    } finally {
-      setLoading(false);
-    }
-  }, [gameState]);
+
+      setLoading(true);
+      setError(null);
+      setHighlightedSquare(position);
+
+      // Play move sound
+      audioManager.play("pieceMove");
+
+      try {
+        // First, visually show the player's move for 2 seconds
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+
+        // Then send the move to backend and get AI response
+        const response = await gameApi.makeMove(gameState, position);
+
+        // Backend returns the game state directly in the response
+        setGameState(response);
+        setValidMoves([]);
+
+        // After a brief pause, highlight machine's move
+        if (response.machine_move) {
+          setTimeout(() => {
+            setHighlightedSquare(response.machine_move);
+            // Play AI move sound
+            audioManager.play("pieceMove");
+            setTimeout(() => {
+              setHighlightedSquare(null);
+            }, 1000);
+          }, 500);
+        } else {
+          // No machine move, clear highlight
+          setHighlightedSquare(null);
+        }
+      } catch (err) {
+        setError(err.message || "Invalid move");
+        console.error("Error making move:", err);
+        setHighlightedSquare(null);
+        audioManager.play("error");
+      } finally {
+        setLoading(false);
+      }
+    },
+    [gameState]
+  );
 
   const loadValidMoves = useCallback(async () => {
-    if (!gameState || gameState.current_player !== 'black' || gameState.game_over) {
+    if (
+      !gameState ||
+      gameState.current_player !== "black" ||
+      gameState.game_over
+    ) {
       setValidMoves([]);
       return;
     }
 
     try {
-      const moves = await gameApi.getValidMoves(gameState, 'black');
+      const moves = await gameApi.getValidMoves(gameState, "black");
       setValidMoves(moves);
     } catch (err) {
-      console.error('Error loading valid moves:', err);
+      console.error("Error loading valid moves:", err);
       setValidMoves([]);
     }
   }, [gameState]);
@@ -100,14 +111,17 @@ export const GameProvider = ({ children }) => {
     setHighlightedSquare(null);
   }, []);
 
-  const handleSquareClick = useCallback((position) => {
-    const [row, col] = position;
-    const isValid = validMoves.some(([r, c]) => r === row && c === col);
-    
-    if (isValid) {
-      makePlayerMove(position);
-    }
-  }, [validMoves, makePlayerMove]);
+  const handleSquareClick = useCallback(
+    (position) => {
+      const [row, col] = position;
+      const isValid = validMoves.some(([r, c]) => r === row && c === col);
+
+      if (isValid) {
+        makePlayerMove(position);
+      }
+    },
+    [validMoves, makePlayerMove]
+  );
 
   const value = {
     gameState,

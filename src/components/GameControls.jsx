@@ -1,27 +1,27 @@
-import { motion } from 'framer-motion';
-import audioManager from '../utils/audioManager';
-import './GameControls.css';
+import { motion } from "framer-motion";
+import audioManager from "../utils/audioManager";
+import "./GameControls.css";
 
 const GameControls = ({ onNewGame, onReset, gameStarted, disabled }) => {
   const handleNewGame = () => {
-    audioManager.play('buttonClick');
+    audioManager.play("buttonClick");
     onNewGame();
   };
 
   const handleReset = () => {
-    audioManager.play('buttonClick');
+    audioManager.play("buttonClick");
     onReset();
   };
 
   return (
-    <motion.div 
+    <motion.div
       className="game-controls"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.3 }}
     >
       {!gameStarted ? (
-        <motion.button 
+        <motion.button
           className="control-button primary"
           onClick={handleNewGame}
           disabled={disabled}
@@ -31,7 +31,7 @@ const GameControls = ({ onNewGame, onReset, gameStarted, disabled }) => {
           Start Game
         </motion.button>
       ) : (
-        <motion.button 
+        <motion.button
           className="control-button secondary"
           onClick={handleReset}
           disabled={disabled}

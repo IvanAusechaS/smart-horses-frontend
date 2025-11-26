@@ -1,8 +1,13 @@
-import { motion } from 'framer-motion';
-import Square from './Square';
-import './ChessBoard.css';
+import { motion } from "framer-motion";
+import Square from "./Square";
+import "./ChessBoard.css";
 
-const ChessBoard = ({ gameState, onSquareClick, validMoves = [], highlightedSquare }) => {
+const ChessBoard = ({
+  gameState,
+  onSquareClick,
+  validMoves = [],
+  highlightedSquare,
+}) => {
   const { board, white_knight, black_knight } = gameState;
 
   const getSquareValue = (row, col) => {
@@ -12,15 +17,15 @@ const ChessBoard = ({ gameState, onSquareClick, validMoves = [], highlightedSqua
 
   const isDestroyed = (row, col) => {
     const value = getSquareValue(row, col);
-    return value === 'destroyed';
+    return value === "destroyed";
   };
 
   const getKnight = (row, col) => {
     if (white_knight && white_knight[0] === row && white_knight[1] === col) {
-      return 'white';
+      return "white";
     }
     if (black_knight && black_knight[0] === row && black_knight[1] === col) {
-      return 'black';
+      return "black";
     }
     return null;
   };
@@ -30,19 +35,21 @@ const ChessBoard = ({ gameState, onSquareClick, validMoves = [], highlightedSqua
   };
 
   const isHighlighted = (row, col) => {
-    return highlightedSquare && 
-           highlightedSquare[0] === row && 
-           highlightedSquare[1] === col;
+    return (
+      highlightedSquare &&
+      highlightedSquare[0] === row &&
+      highlightedSquare[1] === col
+    );
   };
 
   return (
-    <motion.div 
+    <motion.div
       className="chess-board-container"
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.6, type: 'spring', stiffness: 100 }}
+      transition={{ duration: 0.6, type: "spring", stiffness: 100 }}
     >
-      <motion.div 
+      <motion.div
         className="chess-board"
         whileHover={{ scale: 1.01 }}
         transition={{ duration: 0.2 }}
@@ -64,7 +71,7 @@ const ChessBoard = ({ gameState, onSquareClick, validMoves = [], highlightedSqua
           </div>
         ))}
       </motion.div>
-      <motion.div 
+      <motion.div
         className="board-labels"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -72,12 +79,16 @@ const ChessBoard = ({ gameState, onSquareClick, validMoves = [], highlightedSqua
       >
         <div className="row-labels">
           {Array.from({ length: 8 }, (_, i) => (
-            <span key={i} className="label">{8 - i}</span>
+            <span key={i} className="label">
+              {8 - i}
+            </span>
           ))}
         </div>
         <div className="col-labels">
           {Array.from({ length: 8 }, (_, i) => (
-            <span key={i} className="label">{String.fromCharCode(65 + i)}</span>
+            <span key={i} className="label">
+              {String.fromCharCode(65 + i)}
+            </span>
           ))}
         </div>
       </motion.div>

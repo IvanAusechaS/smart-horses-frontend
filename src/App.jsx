@@ -1,15 +1,15 @@
-import { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { GameProvider } from './context/GameContext';
-import { useGame } from './context/useGame';
-import ChessBoard from './components/ChessBoard';
-import ScorePanel from './components/ScorePanel';
-import DifficultySelector from './components/DifficultySelector';
-import GameControls from './components/GameControls';
-import audioManager from './utils/audioManager';
-import './App.css';
+import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { GameProvider } from "./context/GameContext";
+import { useGame } from "./context/useGame";
+import ChessBoard from "./components/ChessBoard";
+import ScorePanel from "./components/ScorePanel";
+import DifficultySelector from "./components/DifficultySelector";
+import GameControls from "./components/GameControls";
+import audioManager from "./utils/audioManager";
+import "./App.css";
 
 function GameContent() {
   const {
@@ -37,15 +37,15 @@ function GameContent() {
   // Check for game over and show notifications
   useEffect(() => {
     if (gameState && gameState.game_over && gameState.winner) {
-      const isPlayerWin = gameState.winner === 'black';
-      
+      const isPlayerWin = gameState.winner === "black";
+
       setShowGameOver(true);
-      
+
       setTimeout(() => {
         if (isPlayerWin) {
-          audioManager.play('victory');
-          toast.success('🎉 Victory! You won the game!', {
-            position: 'top-center',
+          audioManager.play("victory");
+          toast.success("🎉 Victory! You won the game!", {
+            position: "top-center",
             autoClose: 5000,
             hideProgressBar: false,
             closeOnClick: true,
@@ -53,9 +53,9 @@ function GameContent() {
             draggable: true,
           });
         } else {
-          audioManager.play('defeat');
-          toast.error('😔 Game Over! The AI won this time.', {
-            position: 'top-center',
+          audioManager.play("defeat");
+          toast.error("😔 Game Over! The AI won this time.", {
+            position: "top-center",
             autoClose: 5000,
             hideProgressBar: false,
             closeOnClick: true,
@@ -72,11 +72,11 @@ function GameContent() {
     } else if (gameState && gameState.game_over && !gameState.winner) {
       // Draw
       setShowGameOver(true);
-      toast.info('🤝 Draw! It\'s a tie!', {
-        position: 'top-center',
+      toast.info("🤝 Draw! It's a tie!", {
+        position: "top-center",
         autoClose: 5000,
       });
-      
+
       // Auto-dismiss overlay after 8 seconds
       setTimeout(() => {
         setShowGameOver(false);
@@ -87,7 +87,11 @@ function GameContent() {
   }, [gameState]);
 
   useEffect(() => {
-    if (gameState && gameState.current_player === 'black' && !gameState.game_over) {
+    if (
+      gameState &&
+      gameState.current_player === "black" &&
+      !gameState.game_over
+    ) {
       loadValidMoves();
     }
   }, [gameState, loadValidMoves]);
@@ -97,7 +101,7 @@ function GameContent() {
   };
 
   const handleNewGame = () => {
-    audioManager.play('buttonClick');
+    audioManager.play("buttonClick");
     resetGame();
   };
 
@@ -115,23 +119,23 @@ function GameContent() {
         pauseOnHover
         theme="light"
       />
-      
-      <motion.header 
+
+      <motion.header
         className="app-header"
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: 'easeOut' }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
       >
-        <motion.h1 
+        <motion.h1
           className="app-title"
-          animate={{ 
-            backgroundPosition: ['0% 50%', '100% 50%', '0% 50%']
+          animate={{
+            backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
           }}
-          transition={{ duration: 5, repeat: Infinity, ease: 'linear' }}
+          transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
         >
           Smart Horses
         </motion.h1>
-        <motion.p 
+        <motion.p
           className="app-subtitle"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -144,7 +148,7 @@ function GameContent() {
       <main className="app-main">
         <AnimatePresence mode="wait">
           {error && (
-            <motion.div 
+            <motion.div
               className="error-message"
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -158,7 +162,7 @@ function GameContent() {
         </AnimatePresence>
 
         {loading && !gameState && (
-          <motion.div 
+          <motion.div
             className="loading-overlay"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -171,7 +175,7 @@ function GameContent() {
 
         <AnimatePresence mode="wait">
           {!gameState ? (
-            <motion.div 
+            <motion.div
               key="game-setup"
               className="game-setup"
               initial={{ opacity: 0 }}
@@ -179,13 +183,13 @@ function GameContent() {
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.4 }}
             >
-              <DifficultySelector 
-                onSelect={handleDifficultySelect} 
+              <DifficultySelector
+                onSelect={handleDifficultySelect}
                 disabled={loading}
               />
             </motion.div>
           ) : (
-            <motion.div 
+            <motion.div
               key="game-container"
               className="game-container"
               initial={{ opacity: 0, scale: 0.95 }}
@@ -195,35 +199,37 @@ function GameContent() {
             >
               {showGameOver && gameState.game_over && (
                 <motion.div
-                  className={`game-over-overlay ${gameState.winner === 'black' ? 'victory' : 'defeat'}`}
+                  className={`game-over-overlay ${
+                    gameState.winner === "black" ? "victory" : "defeat"
+                  }`}
                   initial={{ opacity: 0, scale: 0.5 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.5 }}
-                  transition={{ 
+                  transition={{
                     duration: 0.6,
-                    type: 'spring',
-                    stiffness: 200
+                    type: "spring",
+                    stiffness: 200,
                   }}
                 >
                   <motion.div
                     className="game-over-content"
-                    animate={{ 
+                    animate={{
                       y: [0, -10, 0],
-                      rotate: [0, 5, -5, 0]
+                      rotate: [0, 5, -5, 0],
                     }}
-                    transition={{ 
-                      duration: 2, 
+                    transition={{
+                      duration: 2,
                       repeat: Infinity,
-                      ease: 'easeInOut'
+                      ease: "easeInOut",
                     }}
                   >
-                    {gameState.winner === 'black' ? (
+                    {gameState.winner === "black" ? (
                       <>
                         <span className="game-over-emoji">🎉</span>
                         <h2>Victory!</h2>
                         <p>You defeated the AI!</p>
                       </>
-                    ) : gameState.winner === 'white' ? (
+                    ) : gameState.winner === "white" ? (
                       <>
                         <span className="game-over-emoji">😔</span>
                         <h2>Game Over</h2>
@@ -263,7 +269,7 @@ function GameContent() {
               />
 
               {loading && (
-                <motion.div 
+                <motion.div
                   className="move-loading"
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -278,7 +284,7 @@ function GameContent() {
         </AnimatePresence>
       </main>
 
-      <motion.footer 
+      <motion.footer
         className="app-footer"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}

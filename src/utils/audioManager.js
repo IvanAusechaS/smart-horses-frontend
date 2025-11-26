@@ -15,7 +15,7 @@ class AudioManager {
     // Note: Audio files should be placed in /public/audio/ directory
     // For this implementation, we'll use Web Audio API to generate simple tones
     // Replace with actual audio files when available
-    
+
     this.initBackgroundMusic();
     this.initSoundEffects();
   }
@@ -23,11 +23,11 @@ class AudioManager {
   initBackgroundMusic() {
     // Use actual music file from public/audio directory
     try {
-      this.bgMusic = new Audio('/audio/video game - David Feyslan.mp3');
+      this.bgMusic = new Audio("/audio/video game - David Feyslan.mp3");
       this.bgMusic.loop = true;
       this.bgMusic.volume = this.musicVolume;
     } catch (e) {
-      console.log('Failed to load background music:', e);
+      console.log("Failed to load background music:", e);
       this.bgMusic = null;
     }
   }
@@ -36,28 +36,32 @@ class AudioManager {
     // Initialize sound effects
     // In production, use actual audio files
     this.sounds = {
-      buttonClick: () => this.playTone(800, 0.1, 'sine'),
-      pieceMove: () => this.playTone(440, 0.15, 'triangle'),
-      capture: () => this.playSequence([
-        { freq: 523, duration: 0.1 },
-        { freq: 659, duration: 0.15 }
-      ]),
-      victory: () => this.playSequence([
-        { freq: 523, duration: 0.2 },
-        { freq: 659, duration: 0.2 },
-        { freq: 784, duration: 0.3 }
-      ]),
-      defeat: () => this.playSequence([
-        { freq: 392, duration: 0.2 },
-        { freq: 330, duration: 0.2 },
-        { freq: 262, duration: 0.4 }
-      ]),
-      validMove: () => this.playTone(1047, 0.08, 'sine'),
-      error: () => this.playTone(200, 0.2, 'sawtooth'),
-      gameStart: () => this.playSequence([
-        { freq: 523, duration: 0.15 },
-        { freq: 784, duration: 0.15 }
-      ])
+      buttonClick: () => this.playTone(800, 0.1, "sine"),
+      pieceMove: () => this.playTone(440, 0.15, "triangle"),
+      capture: () =>
+        this.playSequence([
+          { freq: 523, duration: 0.1 },
+          { freq: 659, duration: 0.15 },
+        ]),
+      victory: () =>
+        this.playSequence([
+          { freq: 523, duration: 0.2 },
+          { freq: 659, duration: 0.2 },
+          { freq: 784, duration: 0.3 },
+        ]),
+      defeat: () =>
+        this.playSequence([
+          { freq: 392, duration: 0.2 },
+          { freq: 330, duration: 0.2 },
+          { freq: 262, duration: 0.4 },
+        ]),
+      validMove: () => this.playTone(1047, 0.08, "sine"),
+      error: () => this.playTone(200, 0.2, "sawtooth"),
+      gameStart: () =>
+        this.playSequence([
+          { freq: 523, duration: 0.15 },
+          { freq: 784, duration: 0.15 },
+        ]),
     };
   }
 
@@ -69,8 +73,8 @@ class AudioManager {
 
   playBackgroundMusic() {
     if (this.bgMusic && !this.isMuted) {
-      this.bgMusic.play().catch(e => {
-        console.log('Background music autoplay blocked:', e);
+      this.bgMusic.play().catch((e) => {
+        console.log("Background music autoplay blocked:", e);
       });
     }
   }
@@ -90,14 +94,14 @@ class AudioManager {
 
   resumeBackgroundMusic() {
     if (this.bgMusic && !this.isMuted) {
-      this.bgMusic.play().catch(e => console.log('Resume failed:', e));
+      this.bgMusic.play().catch((e) => console.log("Resume failed:", e));
     }
   }
 
   // Play sound effect by name
   play(soundName) {
     if (this.isMuted) return;
-    
+
     const sound = this.sounds[soundName];
     if (sound) {
       sound();
@@ -105,11 +109,12 @@ class AudioManager {
   }
 
   // Play a tone using Web Audio API
-  playTone(frequency, duration, type = 'sine') {
+  playTone(frequency, duration, type = "sine") {
     if (this.isMuted) return;
 
     try {
-      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const audioContext = new (window.AudioContext ||
+        window.webkitAudioContext)();
       const oscillator = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
 
@@ -128,7 +133,7 @@ class AudioManager {
       oscillator.start(audioContext.currentTime);
       oscillator.stop(audioContext.currentTime + duration);
     } catch (e) {
-      console.log('Audio playback error:', e);
+      console.log("Audio playback error:", e);
     }
   }
 
@@ -137,9 +142,9 @@ class AudioManager {
     if (this.isMuted) return;
 
     let time = 0;
-    notes.forEach(note => {
+    notes.forEach((note) => {
       setTimeout(() => {
-        this.playTone(note.freq, note.duration, note.type || 'sine');
+        this.playTone(note.freq, note.duration, note.type || "sine");
       }, time * 1000);
       time += note.duration;
     });

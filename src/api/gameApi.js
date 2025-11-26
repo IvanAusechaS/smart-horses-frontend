@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 /**
  * API service for Smart Horses game
@@ -9,24 +9,24 @@ class GameAPI {
    * @param {string} difficulty - 'beginner', 'amateur', or 'expert'
    * @returns {Promise<Object>} Initial game state
    */
-  async createNewGame(difficulty = 'beginner') {
+  async createNewGame(difficulty = "beginner") {
     try {
       const response = await fetch(`${API_URL}/api/game/new`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ difficulty }),
       });
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || 'Failed to create new game');
+        throw new Error(error.message || "Failed to create new game");
       }
 
       return await response.json();
     } catch (error) {
-      console.error('Error creating new game:', error);
+      console.error("Error creating new game:", error);
       throw error;
     }
   }
@@ -40,9 +40,9 @@ class GameAPI {
   async makeMove(gameState, move) {
     try {
       const response = await fetch(`${API_URL}/api/game/move`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           game_state: gameState,
@@ -52,12 +52,12 @@ class GameAPI {
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || 'Invalid move');
+        throw new Error(error.message || "Invalid move");
       }
 
       return await response.json();
     } catch (error) {
-      console.error('Error making move:', error);
+      console.error("Error making move:", error);
       throw error;
     }
   }
@@ -68,12 +68,12 @@ class GameAPI {
    * @param {string} knight - 'white' or 'black'
    * @returns {Promise<Array>} Array of valid move positions
    */
-  async getValidMoves(gameState, knight = 'black') {
+  async getValidMoves(gameState, knight = "black") {
     try {
       const response = await fetch(`${API_URL}/api/game/valid-moves`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           game_state: gameState,
@@ -82,13 +82,13 @@ class GameAPI {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to get valid moves');
+        throw new Error("Failed to get valid moves");
       }
 
       const data = await response.json();
       return data.valid_moves;
     } catch (error) {
-      console.error('Error getting valid moves:', error);
+      console.error("Error getting valid moves:", error);
       throw error;
     }
   }
@@ -101,21 +101,21 @@ class GameAPI {
   async getMachineMove(gameState) {
     try {
       const response = await fetch(`${API_URL}/api/game/machine-move`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ game_state: gameState }),
       });
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || 'Failed to get machine move');
+        throw new Error(error.message || "Failed to get machine move");
       }
 
       return await response.json();
     } catch (error) {
-      console.error('Error getting machine move:', error);
+      console.error("Error getting machine move:", error);
       throw error;
     }
   }
@@ -129,7 +129,7 @@ class GameAPI {
       const response = await fetch(`${API_URL}/health`);
       return await response.json();
     } catch (error) {
-      console.error('Health check failed:', error);
+      console.error("Health check failed:", error);
       throw error;
     }
   }
