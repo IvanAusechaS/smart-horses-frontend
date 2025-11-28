@@ -93,7 +93,8 @@ class GameAPI {
       }
 
       const data = await response.json();
-      return data.valid_moves;
+      // Return full response object (may include penalty_applied, game_state, etc.)
+      return data;
     } catch (error) {
       console.error("Error getting valid moves:", error);
       throw error;
