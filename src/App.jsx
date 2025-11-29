@@ -92,7 +92,13 @@ function GameContent() {
       gameState.current_player === "black" &&
       !gameState.game_over
     ) {
-      loadValidMoves();
+      // Esperar 1 segundo antes de pedir los movimientos válidos para que
+      // el último movimiento de la máquina sea claramente visible.
+      const timeoutId = setTimeout(() => {
+        loadValidMoves();
+      }, 1000);
+
+      return () => clearTimeout(timeoutId);
     }
   }, [gameState, loadValidMoves]);
 

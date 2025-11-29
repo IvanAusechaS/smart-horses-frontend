@@ -4,6 +4,37 @@ import audioManager from "../utils/audioManager";
 
 const GameContext = createContext(null);
 
+// Aplica de forma optimista el movimiento del jugador (negras) en el estado
+// local para que su caballo se mueva inmediatamente en la UI.
+const applyPlayerMoveOptimistic = (state, position) => {
+  if (!state) return state;
+
+  const [newRow, newCol] = position;
+  const [oldRow, oldCol] = state.black_knight;
+
+  const board = { ...state.board };
+  const newKey = `${newRow},${newCol}`;
+  const oldKey = `${oldRow},${oldCol}`;
+
+  const squareValue = board[newKey];
+  let blackScore = state.black_score;
+
+  if (typeof squareValue === "number") {
+    blackScore += squareValue;
+  }
+
+  // La casilla anterior del caballo del jugador se destruye.
+  board[oldKey] = "destroyed";
+
+  return {
+    ...state,
+    board,
+    black_knight: [newRow, newCol],
+    black_score: blackScore,
+    current_player: "white", // Después del movimiento del jugador, juega la máquina
+  };
+};
+
 export const GameProvider = ({ children }) => {
   const [gameState, setGameState] = useState(null);
   const [difficulty, setDifficulty] = useState(null);
@@ -41,34 +72,38 @@ export const GameProvider = ({ children }) => {
 
       setLoading(true);
       setError(null);
+
+      // Play move sound y mueve la ficha del jugador inmediatamente
+      audioManager.play("pieceMove");
       setHighlightedSquare(position);
 
-      // Play move sound
-      audioManager.play("pieceMove");
+      const previousState = gameState;
+      const optimisticState = applyPlayerMoveOptimistic(previousState, position);
+      setGameState(optimisticState);
 
       try {
-        // First, visually show the player's move for 2 seconds
-        await new Promise((resolve) => setTimeout(resolve, 2000));
+        // Lanzamos en paralelo:
+        // 1) la petición al backend
+        // 2) un delay mínimo de 1 segundo para que se vea claramente tu movimiento
+        const movePromise = gameApi.makeMove(previousState, position);
+        const delayPromise = new Promise((resolve) => setTimeout(resolve, 1000));
 
-        // Then send the move to backend and get AI response
-        const response = await gameApi.makeMove(gameState, position);
+        const [response] = await Promise.all([movePromise, delayPromise]);
 
-        // Backend returns the game state directly in the response
+        // Estado definitivo desde el backend (incluye movimiento de la máquina)
         setGameState(response);
         setValidMoves([]);
 
-        // After a brief pause, highlight machine's move
+        // Después, destacamos el movimiento de la máquina
         if (response.machine_move) {
           setTimeout(() => {
             setHighlightedSquare(response.machine_move);
-            // Play AI move sound
             audioManager.play("pieceMove");
             setTimeout(() => {
               setHighlightedSquare(null);
             }, 1000);
-          }, 500);
+          }, 400);
         } else {
-          // No machine move, clear highlight
           setHighlightedSquare(null);
         }
       } catch (err) {
@@ -94,8 +129,31 @@ export const GameProvider = ({ children }) => {
     }
 
     try {
-      const moves = await gameApi.getValidMoves(gameState, "black");
-      setValidMoves(moves);
+      const response = await gameApi.getValidMoves(gameState, "black");
+
+      // Caso especial: jugador sin movimientos → penalización y posible
+      // movimiento automático de la máquina.
+      if (response.penalty_applied && response.game_state) {
+        // Actualizamos todo el estado del juego.
+        setGameState(response.game_state);
+        setValidMoves([]);
+
+        if (response.machine_move) {
+          // Mostrar el movimiento de la máquina con una pequeña pausa
+          setTimeout(() => {
+            setHighlightedSquare(response.machine_move);
+            audioManager.play("pieceMove");
+            setTimeout(() => {
+              setHighlightedSquare(null);
+              // Si después de este movimiento vuelve a ser tu turno,
+              // el useEffect de App.jsx llamará de nuevo a loadValidMoves.
+            }, 800);
+          }, 400);
+        }
+      } else {
+        // Caso normal: solo actualizar los movimientos válidos
+        setValidMoves(response.valid_moves || response);
+      }
     } catch (err) {
       console.error("Error loading valid moves:", err);
       setValidMoves([]);
